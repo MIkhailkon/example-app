@@ -36,13 +36,18 @@ class FormController extends Controller
      */
     public function store(Request $request)
     {
-        $params = $request->all();
-        unset($params['image']);
-       // dd($request->image);
-        if(!is_null($request->image)){
-            $path  = $request->file('image')->store('application');
-            $params['image'] = $path;
-        }
+
+        $params = $request->validate([
+            'name' => 'required|min:3|max:50|string',
+            'phone' => 'required',
+            'company' => 'required|min:3|max:50|string',
+            'application' => 'required|min:3|max:50|string',
+            'image' => 'required',
+        ]);
+        $params['message'] = $request->message;
+
+        $path  = $request->file('image')->store('application');
+        $params['image'] = $path;
 
         if (Auth::id() !== null){
             $params['user_id'] = Auth::id();
